@@ -1,0 +1,2668 @@
+// ==UserScript==
+// @name         cytube user highlight
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Enhance user experience in sneedtv
+// @author       Rosh
+// @match        https://cytu.be/r/sneedtv
+// @grant        none
+// @license MIT
+// ==/UserScript==
+
+function addStyleSheet(style){
+  var getHead = document.getElementsByTagName("HEAD")[0];
+  var cssNode = window.document.createElement( 'style' );
+  var elementStyle= getHead.appendChild(cssNode);
+  elementStyle.innerHTML = style;
+  return elementStyle;
+}
+
+addStyleSheet('@import https://github.com/kingcobracy/sneedtv.css;');
+
+
+/* give usernames color based on the first letter of their name */
+
+:root {
+    --col1: #9c4f4f;
+    /* a,b,c */
+    --col2: #7c6470;
+    /* d,e,f */
+    --col3: #71609e;
+    /* g,h,i */
+    --col4: #3d85c6;
+    /* j,k,l */
+    --col5: #134f5c;
+    /* m,n,o */
+    --col6: #6aa84f;
+    /* p,q,r */
+    --col7: #af4e4e;
+    /* s,t,u,v */
+    --col8: #f6b26b;
+    /* w,x,y,z */
+}
+
+div[class^="chat-msg-g" i] strong,
+div[class^="chat-msg-b" i] strong,
+div[class^="chat-msg-c" i] strong {
+    color: var(--col1)
+}
+
+div[class^="chat-msg-d" i] strong,
+div[class^="chat-msg-e" i] strong,
+div[class^="chat-msg-f" i] strong {
+    color: var(--col2)
+}
+
+div[class^="chat-msg-g" i] strong,
+div[class^="chat-msg-h" i] strong,
+div[class^="chat-msg-i" i] strong {
+    color: var(--col3)
+}
+
+div[class^="chat-msg-j" i] strong,
+div[class^="chat-msg-k" i] strong,
+div[class^="chat-msg-l" i] strong {
+    color: var(--col4)
+}
+
+div[class^="chat-msg-m" i] strong,
+div[class^="chat-msg-n" i] strong,
+div[class^="chat-msg-o" i] strong {
+    color: var(--col5)
+}
+
+div[class^="chat-msg-p" i] strong,
+div[class^="chat-msg-q" i] strong,
+div[class^="chat-msg-r" i] strong {
+    color: var(--col6)
+}
+
+div[class^="chat-msg-s" i] strong,
+div[class^="chat-msg-t" i] strong,
+div[class^="chat-msg-u" i] strong,
+div[class^="chat-msg-v" i] strong {
+    color: var(--col7)
+}
+
+div[class^="chat-msg-w" i] strong,
+div[class^="chat-msg-x" i] strong,
+div[class^="chat-msg-y" i] strong,
+div[class^="chat-msg-z" i] strong {
+    color: var(--col8)
+}
+
+:root {
+    --dark-bg: #0b0b0b;
+    --items-bg: #131313;
+    --bot-chat-msg-bg: #222528;
+    --playlist-perm: #0e0e0e;
+    --playlist-temp: #111313;
+    --bg: #1b1b1b;
+    --bg-chat: #181819;
+    --btn-bg: #131313;
+    --btn-bg-hover: #0e0e0e;
+    --btn-text: #FFD90F;
+    --btn-text-hover: #FFD90F;
+    --btn-text-danger: darkred;
+    --banner-logo: #FFD90F;
+    --banner-flicker: #FFD90F;
+    --bot-video-title: #FFD90F;
+    --playlist-buttons: #777;
+    --playlist-current: #FFD90F;
+    --userlist-admins: #FFD90F;
+    --dropdown-link: #999;
+    --dropdown-link-hover: #FFD90F;
+    --bot-username: #FFD90F;
+    --border-master: #252525;
+    --border-highlight: #013421
+}
+
+#messagebuffer div[class*=server],
+#messagebuffer div[class*=voteskip],
+div.chat-msg-.serverinfo {
+    animation: css 0s 30s forwards
+}
+
+@keyframes css {
+    to {
+        visibility: hidden;
+        height: 0
+    }
+}
+
+div#emotelist button.close {
+    color: red;
+    position: fixed;
+    right: 8px;
+    top: 5px;
+    z-index: 99999
+}
+
+button#togglemotd span.glyphicon.glyphicon-minus::before {
+    content: "\e014";
+    font-size: 17px
+}
+
+button#togglemotd span.glyphicon.glyphicon-plus::before {
+    content: "\e102";
+    font-size: 17px
+}
+
+div#motdrow.row div.col-lg-12.col-md-12 div#motdwrap.well {
+    border: none;
+    background: 0 0
+}
+
+button#togglemotd.close.pull-right {
+    opacity: 1;
+    color: var(--banner-logo);
+    text-shadow: none;
+    padding-right: 4px;
+    padding-top: 3px
+}
+
+#motd {
+    background-image: url();
+    border: 1px solid var(--border-master) !important
+}
+
+#motd .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--banner-logo);
+    margin-bottom: 10px
+}
+
+#motd .grid {
+    display: flex;
+    color: var(--dropdown-link)
+}
+
+#motd .grid div {
+    margin-right: 20px
+}
+
+#motd .grid div a {
+    font-weight: 700;
+    color: var(--dropdown-link)
+}
+
+#motd .grid div a.magic:hover {
+    -webkit-animation-name: dankMods;
+    -webkit-animation-duration: .1s;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-iteration-count: infinite
+}
+
+#motd .image-bg {
+    background-size: 130px;
+    background-position: 0 -6px;
+    background-repeat: no-repeat;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 140px;
+    background-image: url(https://cybar.live/img/gfuel.png)
+}
+
+#motdwrap {
+    padding: 0;
+    margin-bottom: 9px
+}
+
+#emotelist ul.pagination,
+html body div#wrap section#mainpage div.container-fluid div#motdrow.row div.col-lg-12.col-md-12 div#motdwrap.well #emotelist .pagination>li>a {
+    background: red !important
+}
+
+html body.modal-open div#emotelist.modal.fade.in div.modal-dialog.modal-dialog-nonfluid div.modal-content div.modal-body div.emotelist-paginator-container ul.pagination {
+    font-size: 12px
+}
+
+input.form-control[type=email],
+input.form-control[type=password],
+input.form-control[type=text],
+textarea.form-control {
+    background-color: var(--items-bg) !important;
+    color: #c8c8c8
+}
+
+html body.modal-open div#emotelist.modal div.modal-dialog.modal-dialog-nonfluid {
+    margin: auto !important;
+    margin-top: 0 !important
+}
+
+.emote-preview-container,
+.emotelist-table {
+    background: 0 0 !important
+}
+
+div#emotelist button.close {
+    opacity: .6;
+    text-shadow: none
+}
+
+div#emotelist div.modal-footer {
+    display: none
+}
+
+div#emotelist div.modal-header h4 {
+    font-size: 0
+}
+
+div#emotelist div.modal-header {
+    margin-top: -30px;
+    height: 1px
+}
+
+.table>tbody>tr>td {
+    border-top: 1px solid var(--dark-bg)
+}
+
+div#cs-chatfilters.tab-pane.active table.table.table-striped.table-condensed {
+    background-color: var(--items-bg)
+}
+
+.table-striped>tbody>tr {
+    background: var(--items-bg)
+}
+
+.emotelist-table td {
+    background-color: transparent !important
+}
+
+.table-striped>tbody>tr:nth-child(2n+1) {
+    background: var(--items-bg)
+}
+
+code {
+    color: var(--bot-username);
+    background-color: var(--dark-bg)
+}
+
+ul.pagination li a {
+    background-color: #131313 !important;
+    background-image: none !important
+}
+
+.nav>li>a:focus,
+.nav>li>a:hover {
+    background-color: var(--dark-bg) !important
+}
+
+ul.nav.nav-tabs li.active a {
+    background-color: var(--dark-bg) !important;
+    color: var(--bot-username) !important
+}
+
+.emotelist-paginator-container {
+    text-align: center;
+    display: inline-block;
+    width: 100%
+}
+
+.userlist_item .userlist_owner {
+    background-image: url(https://cybar.live/favicon.ico);
+    background-size: 12px;
+    padding-left: 12px;
+    background-repeat: no-repeat
+}
+
+.btn-default {
+    margin-left: 2px !important;
+    margin-bottom: 2px !important
+}
+
+#showplaylistmanager,
+#sounds-btn {
+    margin-right: 1px !important
+}
+
+.panel-heading {
+    background-color: var(--items-bg) !important
+}
+
+.panel-body {
+    background-color: var(--bg-chat) !important
+}
+
+#chatheader,
+#videowrap-header {
+    border: none !important
+}
+
+#userlisttoggle {
+    margin-right: 4px
+}
+
+.dropdown-menu>li>a:focus,
+.dropdown-menu>li>a:hover {
+    color: var(--dropdown-link-hover) !important;
+    background-color: var(--dark-bg)
+}
+
+.dropdown-menu>li>a {
+    color: var(--dropdown-link) !important
+}
+
+.pbar,
+body.bright .pbar {
+    background-image: linear-gradient(to right, #013421, #013421) !important
+}
+
+.pbar {
+    background-size: 0 100%;
+    background-position: 0 center !important;
+    background-repeat: no-repeat !important
+}
+
+li .opt.activated {
+    color: var(--btn-text-hover) !important
+}
+
+.navbar-fixed-bottom,
+.navbar-fixed-top {
+    position: absolute !important
+}
+
+#pllength {
+    padding-right: 6px
+}
+
+div.userlist_item.userlist_afk {
+    opacity: .6
+}
+
+div.userlist_item {
+    padding-left: 3px
+}
+
+#plmeta {
+    margin-bottom: 10px;
+    border-bottom: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 4px
+}
+
+.nick-hover {
+    background: var(--items-bg)
+}
+
+ul#chatopts-menu li {
+    min-width: 200px !important
+}
+
+ul#chatopts-menu .btn.btn-sm.btn-default {
+    margin-left: -10px
+}
+
+.embed-responsive.embed-responsive-16by9 {
+    padding-bottom: 58.5%
+}
+
+.server-msg-reconnect {
+    color: var(--banner-logo);
+    background-color: transparent;
+    border-color: var(--border-highlight)
+}
+
+button#upload-btn.btn.btn-sm.btn-default {
+    margin-right: 0
+}
+
+#addoptswrap .clearfix5,
+#chatfunc-outer,
+#clearplaylist,
+#expand-chat,
+#fullscreenbtn,
+#getplaylist,
+#modflair,
+#navbar-unpin,
+#public-btn,
+#qlockbtn,
+#scroll-to-chat,
+#scroll-to-pl,
+#showcustomembed,
+#shuffleplaylist,
+.videolist.queue_sortable li.queue_entry span.glyphicon,
+.well.active span.label,
+[title="/blacked"],
+[title="/bw"],
+[title="/coom3"],
+[title="/flip"],
+[title="/glow"],
+[title="/inverse"],
+[title="/negative"],
+[title="/rainbow"],
+[title="/reverse"],
+[title="/reverseinverse"],
+[title="/rotate90"],
+[title="/sepia"],
+[title="/shadow"],
+[title="/tiny"],
+[title="/yellow"],
+div#pm-GothicKing span.timestamp,
+div#pm-GothicKing strong.username,
+div.chat-msg-GothicKing span.action,
+div.userlist_item.userlist_afk span span.glyphicon.glyphicon-time {
+    display: none !important
+}
+
+#pls-menu,
+.dropdown-menu,
+.dropdown-menu-right.noclose,
+.dropup.btn-group.open .dropdown-menu {
+    background-color: var(--items-bg);
+    border: 1px solid var(--border-master)
+}
+
+#chatline,
+#custom-ping-file,
+#library_query,
+#mediaurl,
+#note-area,
+#plfilter,
+#userpl_name,
+.form-control,
+input.form-control.pm-input {
+    background-color: var(--items-bg) !important;
+    color: #fff !important;
+    box-shadow: none !important
+}
+
+.qe_title {
+    padding-left: 4px
+}
+
+button.btn-danger span.glyphicon.glyphicon-trash {
+    color: var(--btn-text-danger)
+}
+
+#pllength {
+    margin-left: 5px
+}
+
+#plmeta .label {
+    margin-left: 3px;
+    padding-bottom: 2px;
+    padding-top: 4px;
+    font-size: 12px
+}
+
+.navbar-text span {
+    display: none
+}
+
+navbar-header {
+    background-image: url(https://vignette.wikia.nocookie.net/vsbattles/images/9/90/Sneed_feed_and_seed-removebg-preview.png/revision/latest/scale-to-width-down/340?cb=20200226015432) !important;
+    background-repeat: no-repeat;
+    background-size: 53px;
+    background-position: 9px -7px
+}
+
+.navbar-text #welcome {
+    display: inline;
+    margin-right: 10px
+}
+
+.navbar-nav,
+.navbar-text {
+    text-shadow: none
+}
+
+#videowrap-header {
+    overflow: hidden
+}
+
+#videowrap-header .label {
+    background: 0 0;
+    font-size: 12px;
+    padding-right: 5px;
+    margin-top: 1px;
+    color: var(--btn-txt)
+}
+
+#plcount {
+    padding-left: 3px
+}
+
+.nick-highlight {
+    background-color: var(--items-bg)
+}
+
+.well {
+    border-color: var(--border-master) !important
+}
+
+#searchcontrol #library {
+    margin-bottom: 0
+}
+
+#searchcontrol .checkbox {
+    margin-bottom: 0;
+    margin-top: 5px
+}
+
+div#searchcontrol ul#library.videolist {
+    margin-bottom: 40px
+}
+
+#playlistrow #rightpane-inner {
+    margin-top: 10px;
+    margin-bottom: 10px
+}
+
+div.userlist_item span {
+    font-weight: 700 !important
+}
+
+div.userlist_item.userlist_afk span {
+    font-weight: 400 !important
+}
+
+.label-default {
+    background-color: var(--btn-bg);
+    color: var(--btn-text)
+}
+
+#footer {
+    padding-top: 15px !important;
+    padding-bottom: 12px !important;
+    margin-top: 0 !important
+}
+
+#addoptswrap .well {
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border-master)
+}
+
+.alert-info {
+    background-color: var(--items-bg);
+    border-color: var(--border-master)
+}
+
+.btn {
+    text-shadow: none
+}
+
+.btn-default {
+    background: var(--btn-bg) !important
+}
+
+.btn-default.active,
+.btn-default:active,
+.btn-default:focus,
+.btn-default:hover {
+    background-color: var(--btn-bg-hover) !important;
+    color: var(--btn-text-hover) !important;
+    text-shadow: none
+}
+
+div.chat-msg-.serverinfo {
+    font-size: 9pt
+}
+
+.chat-msg-GothicKing img.channel-emote {
+    max-height: 30px !important
+}
+
+#messagebuffer,
+#userlist {
+    background-color: var(--bg-chat)
+}
+
+#wrap {
+    background-color: var(--bg)
+}
+
+.btn-default {
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: 0
+}
+
+.videolist .btn-default {
+    background: 0 0
+}
+
+#chatheader,
+#messagebuffer,
+#motdwrap,
+#plmeta,
+#userlist,
+#videowrap-header,
+.form-control,
+.videolist>li:first-child {
+    border-color: var(--border-master) !important
+}
+
+#newpollbtn,
+#testimonials-btn {
+    margin-left: 0 !important
+}
+
+#testimonials-btn {
+    position: absolute;
+    top: 15px;
+    right: 21px;
+    padding: 0
+}
+
+.qta {
+    display: flex
+}
+
+.qta img {
+    margin-right: 10px;
+    min-width: 90px
+}
+
+.qta .qtit {
+    color: var(--bot-username);
+    font-weight: 700;
+    margin-bottom: 2px
+}
+
+.qta .qcon {
+    font-style: italic;
+    font-size: 16px;
+    color: #777
+}
+
+.qta a {
+    font-size: 13px;
+    font-style: italic
+}
+
+.testimonial a:focus,
+.testimonial a:hover {
+    text-decoration: none !important
+}
+
+footer {
+    background-color: transparent !important
+}
+
+#motd {
+    margin-top: 20px;
+    margin-bottom: 30px
+}
+
+#chatheader,
+#videowrap-header {
+    background: var(--bg-chat)
+}
+
+#messagebuffer,
+#userlist {
+    border: 0
+}
+
+.well.active {
+    border: 1px solid var(--border-master)
+}
+
+.container .credit {
+    margin: 5px;
+    font-size: 12px
+}
+
+#plmeta {
+    background: var(--items-bg)
+}
+
+.well {
+    background: var(--items-bg)
+}
+
+html body.fluid div#wrap section#mainpage div.container-fluid div#main.row div#chatwrap.col-lg-5.col-md-5 div.profile-box div#chanjs-allow-prompt form#chanjs-allow-prompt {
+    border-bottom: 0 !important
+}
+
+.navbar-header {
+    background-image: url(https://vignette.wikia.nocookie.net/vsbattles/images/9/90/Sneed_feed_and_seed-removebg-preview.png/revision/latest/scale-to-width-down/340?cb=20200226015432) !important;
+    background-repeat: no-repeat;
+    background-size: 53px;
+    background-position: 9px -7px;
+    padding-left: 50px !important
+}
+
+.navbar-brand {
+    font-size: 0
+}
+
+.navbar-brand:before {
+    content: "SneedTV" !important;
+    font-size: 14pt !important;
+    font-weight: 700
+}
+
+.navbar {
+    background-image: none !important;
+    background-color: var(--dark-bg);
+    border: 0
+}
+
+.navbar-brand {
+    animation: flicker 30s linear infinite;
+    color: var(--banner-logo) !important
+}
+
+form#chanjs-allow-prompt a.btn.btn-danger {
+    padding: 2px
+}
+
+form a.btn.btn-danger {
+    background: #333;
+    font-size: 12px;
+    padding: 5px !important;
+    margin-top: 5px;
+    background: 0 0;
+    border: none;
+    color: #fff;
+    padding: 0 !important
+}
+
+form {
+    line-height: 16px;
+    text-align: left !important
+}
+
+form span {
+    font-size: 13px;
+    color: #999
+}
+
+#chanjs-allow-prompt-buttons {
+    text-align: center
+}
+
+button#chanjs-allow.btn.btn-xs.btn-danger,
+button#chanjs-deny.btn.btn-xs.btn-danger {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 9px;
+    padding-bottom: 7px
+}
+
+button#chanjs-allow.btn.btn-xs.btn-danger {
+    background: green
+}
+
+button#chanjs-deny.btn.btn-xs.btn-danger {
+    background: #8b0000
+}
+
+.userlist_owner {
+    color: var(--userlist-admins) !important;
+    font-weight: 400 !important
+}
+
+* {
+    border-radius: 0 !important
+}
+
+li.queue_entry .qe_time {
+    font-size: 12px;
+    color: var(--playlist-buttons);
+    padding-right: 4px
+}
+
+.queue_active {
+    background-image: none
+}
+
+.videolist li {
+    background-color: var(--playlist-perm)
+}
+
+.videolist li button {
+    color: var(--playlist-buttons) !important
+}
+
+.videolist li.queue_temp {
+    background-color: var(--playlist-temp)
+}
+
+.videolist li button {
+    color: var(--playlist-buttons)
+}
+
+.videolist li.queue_active {
+    background-color: var(--playlist-perm) !important
+}
+
+.queue_active .qe_title {
+    color: var(--playlist-current) !important;
+    font-weight: 700 !important
+}
+
+.queue_temp {
+    background-image: none;
+    background: var(--playlist-temp) !important
+}
+
+[title="/sepia"]+.channel-emote {
+    filter: sepia(100%)
+}
+
+[title="/negative"]+.channel-emote {
+    filter: invert(1)
+}
+
+[title="/bw"]+.channel-emote {
+    filter: grayscale(100%)
+}
+
+[title="/reverse"]+.channel-emote {
+    transform: scaleX(-1)
+}
+
+[title="/inverse"]+.channel-emote {
+    transform: scaleY(-1)
+}
+
+[title="/rotate90"]+.channel-emote {
+    transform: rotate(90deg)
+}
+
+[title="/shadow"]+.channel-emote {
+    filter: drop-shadow(4px 4px 10px)
+}
+
+[title="/rainbow"]+.channel-emote {
+    animation: lsd 1s infinite linear
+}
+
+[title="/reverseinverse"]+.channel-emote {
+    transform: scale3d(-1, -1, 1)
+}
+
+[title="/coom3"]+.channel-emote {
+    animation: rotation 10s infinite linear
+}
+
+[title="/yellow"]+.channel-emote {
+    animation: fadeOut ease-in 5s;
+    animation-fill-mode: forwards
+}
+
+[title="/blacked"]+.channel-emote {
+    filter: hue-rotate(288deg) saturate(.22) brightness(.7) contrast(1.7)
+}
+
+[title="/flip"]+.channel-emote {
+    animation: flip 5s infinite linear;
+    transform-style: preserve-3d
+}
+
+[title="/glow"]+.channel-emote {
+    animation: glow 3s infinite linear;
+    transform-style: preserve-3d
+}
+
+[title="/zanelove"]+.channel-emote {
+    height: 500px !important;
+    max-height: 500px !important;
+    width: 500px !important;
+    max-width: 500px !important;
+    margin: 0 5px -500px !important;
+    opacity: 10% !important;
+    position: relative !important;
+    bottom: 500px !important
+}
+
+.channel-emote,
+img {
+    max-height: 90px !important;
+    max-width: 90px !important
+}
+
+[title="/cobradrip"] {
+    max-height: 120px !important;
+    max-width: 120px !important;
+    margin-bottom: -20px;
+    margin-top: -2px
+}
+
+[title="/tiny"]+.channel-emote {
+    max-height: 32px !important;
+    max-width: 30px !important
+}
+
+.navbar-nav>li>a {
+    border: none !important
+}
+
+#currenttitle {
+    padding-left: 4px
+}
+
+#chatline {
+    border: 0
+}
+
+#userlist {
+    width: 100px
+}
+
+#messagebuffer {
+    overflow-x: hidden
+}
+
+.userlist_item .glyphicon {
+    display: inherit
+}
+
+flipped {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1)
+}
+
+ul#queue.videolist div.btn-group button.btn {
+    background: 0 0 !important
+}
+
+.modal-content {
+    background: var(--dark-bg);
+    border: 1px solid var(--border-master)
+}
+
+.navbar-nav>li>a {
+    color: var(--btn-text) !important
+}
+
+.navbar-nav>li>a:active,
+.navbar-nav>li>a:focus,
+.navbar-nav>li>a:hover {
+    background-image: none;
+    background-color: #0e0e0e !important
+}
+
+.profile-box {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--border-master)
+}
+
+.nav .open>a,
+.nav .open>a:focus,
+.nav .open>a:hover {
+    color: var(--btn-text-hover) !important;
+    background-color: #0e0e0e !important
+}
+
+@keyframes flip {
+    from {
+        transform: rotateY(0) rotateX(0)
+    }
+    to {
+        transform: rotateY(360deg) rotateX(360deg)
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1
+    }
+    100% {
+        opacity: 0
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0)
+    }
+    to {
+        transform: rotate(359deg)
+    }
+}
+
+@keyframes glow {
+    0% {
+        filter: saturate(0) sepia(1) brightness(.5) contrast(200%) hue-rotate(70deg)
+    }
+    50% {
+        filter: saturate(300%) sepia(1) brightness(1.5) contrast(200%) hue-rotate(70deg)
+    }
+    100% {
+        filter: saturate(0) sepia(1) brightness(.5) contrast(200%) hue-rotate(70deg)
+    }
+}
+
+@keyframes lsd {
+    from {
+        filter: hue-rotate(0)
+    }
+    to {
+        filter: hue-rotate(359deg)
+    }
+}
+
+.cheeseMeme {
+    font-weight: 700 !important;
+    animation-name: cheesemods;
+    animation-duration: .3s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: cheesemods;
+    -webkit-animation-duration: .3s;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-iteration-count: infinite
+}
+
+.pootMeme {
+    font-weight: 700 !important;
+    animation-name: pootMods;
+    animation-duration: .3s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: pootMods;
+    -webkit-animation-duration: .3s;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-iteration-count: infinite
+}
+
+@keyframes cheesemods {
+    0% {
+        color: #ff0
+    }
+    25% {
+        color: gold
+    }
+    50% {
+        color: orange
+    }
+    75% {
+        color: #ff0
+    }
+    100% {
+        color: gold
+    }
+}
+
+@-webkit-keyframes cheesemods {
+    0% {
+        color: #ff0
+    }
+    25% {
+        color: gold
+    }
+    50% {
+        color: orange
+    }
+    75% {
+        color: #ff0
+    }
+    100% {
+        color: gold
+    }
+}
+
+@keyframes pootMods {
+    0% {
+        color: brown
+    }
+    25% {
+        color: #006400
+    }
+    50% {
+        color: brown
+    }
+    75% {
+        color: green
+    }
+    100% {
+        color: red
+    }
+}
+
+@-webkit-keyframes pootMods {
+    0% {
+        color: brown
+    }
+    25% {
+        color: #006400
+    }
+    50% {
+        color: brown
+    }
+    75% {
+        color: green
+    }
+    100% {
+        color: red
+    }
+}
+
+.dankestMeme {
+    font-weight: 700 !important;
+    animation-name: dankMods;
+    animation-duration: .3s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: dankMods;
+    -webkit-animation-duration: .3s;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-iteration-count: infinite
+}
+
+@keyframes dankMods {
+    0% {
+        color: #009
+    }
+    25% {
+        color: #090
+    }
+    50% {
+        color: #f60
+    }
+    75% {
+        color: #906
+    }
+}
+
+.panel-primary>.panel-heading {
+    background-color: var(--border-highlight) !important
+}
+
+div#emotelist button.close {
+    color: red;
+    position: fixed;
+    right: 8px;
+    top: 5px;
+    z-index: 99999
+}
+
+a.bigme {
+    font-weight: 0
+}
+
+.embedimg:hover {
+    transform: scale(3) !important;
+    margin-left: 30px;
+    overflow: hidden
+}
+
+button#togglemotd span.glyphicon.glyphicon-minus::before {
+    content: "\e014";
+    font-size: 17px
+}
+
+button#togglemotd span.glyphicon.glyphicon-plus::before {
+    content: "\e102";
+    font-size: 17px
+}
+
+div#motdrow.row div.col-lg-12.col-md-12 div#motdwrap.well {
+    border: none;
+    background: 0 0
+}
+
+button#togglemotd.close.pull-right {
+    opacity: 1;
+    color: var(--banner-logo);
+    text-shadow: none;
+    padding-right: 4px;
+    padding-top: 3px
+}
+
+#motd {
+    border: 1px solid var(--border-master) !important
+}
+
+#motd .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--banner-logo);
+    margin-bottom: 10px
+}
+
+#motd .grid {
+    display: flex
+}
+
+#motd .grid div {
+    margin-right: 20px
+}
+
+#motd .grid div a {
+    font-weight: 700
+}
+
+#motd .grid div a.magic:hover {
+    -webkit-animation-name: dankMods;
+    -webkit-animation-duration: .1s;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-iteration-count: infinite
+}
+
+#motd .image-bg {
+    background-size: 130px;
+    background-position: 0 -6px;
+    background-repeat: no-repeat;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 140px
+}
+
+#motdwrap {
+    padding: 0;
+    margin-bottom: 5px;
+    margin-top: -8px
+}
+
+#main {
+    margin-bottom: 3px
+}
+
+#emotelist ul.pagination,
+html body div#wrap section#mainpage div.container-fluid div#motdrow.row div.col-lg-12.col-md-12 div#motdwrap.well #emotelist .pagination>li>a {
+    background: red !important
+}
+
+html body.modal-open div#emotelist.modal.fade.in div.modal-dialog.modal-dialog-nonfluid div.modal-content div.modal-body div.emotelist-paginator-container ul.pagination {
+    font-size: 12px
+}
+
+input.form-control[type=email],
+input.form-control[type=password],
+input.form-control[type=text],
+textarea.form-control {
+    background-color: var(--items-bg) !important;
+    color: #c8c8c8
+}
+
+html body.modal-open div#emotelist.modal div.modal-dialog.modal-dialog-nonfluid {
+    margin: auto !important;
+    margin-top: 0 !important
+}
+
+.emote-preview-container,
+.emotelist-table {
+    background: 0 0 !important
+}
+
+div#emotelist button.close {
+    opacity: .6;
+    text-shadow: none
+}
+
+div#emotelist div.modal-footer {
+    display: none
+}
+
+div#emotelist div.modal-header h4 {
+    font-size: 0
+}
+
+div#emotelist div.modal-header {
+    margin-top: -30px;
+    height: 1px
+}
+
+.table>tbody>tr>td {
+    border-top: 1px solid var(--dark-bg)
+}
+
+div#cs-chatfilters.tab-pane.active table.table.table-striped.table-condensed {
+    background-color: var(--items-bg)
+}
+
+.table-striped>tbody>tr {
+    background: var(--items-bg)
+}
+
+.emotelist-table td {
+    background-color: transparent !important
+}
+
+.table-striped>tbody>tr:nth-child(2n+1) {
+    background: var(--items-bg)
+}
+
+code {
+    color: var(--bot-username);
+    background-color: var(--dark-bg)
+}
+
+ul.pagination li a {
+    background-color: #131313 !important;
+    background-image: none !important
+}
+
+.nav>li>a:focus,
+.nav>li>a:hover {
+    background-color: var(--dark-bg) !important
+}
+
+ul.nav.nav-tabs li.active a {
+    background-color: var(--dark-bg) !important;
+    color: var(--bot-username) !important
+}
+
+.emotelist-paginator-container {
+    text-align: center;
+    display: inline-block;
+    width: 100%
+}
+
+#playlistrow #rightpane-inner {
+    margin-top: 0
+}
+
+#showsearch {
+    margin-left: 0 !important
+}
+
+#footer {
+    padding: 0 !important;
+    margin-top: 40px !important;
+    background-color: transparent;
+    opacity: .3
+}
+
+html {
+    background-color: var(--bg) !important
+}
+
+#scroll-top,
+div#playlistrow.row div#rightpane div#rightpane-inner.row div#plonotification {
+    display: none !important
+}
+
+.emote-preview-container {
+    width: auto !important;
+    height: auto !important
+}
+
+.poll-notify {
+    color: var(--bot-username)
+}
+
+.queue_entry {
+    border: none !important
+}
+
+.queue_entry {
+    border-top: 1px solid var(--border-master) !important
+}
+
+#plmeta {
+    border: none !important;
+    background: var(--playlist-perm)
+}
+
+#plmeta .label-default {
+    background: 0 0 !important
+}
+
+nav.navbar span.glyphicon.glyphicon-envelope {
+    color: var(--banner-flicker) !important
+}
+
+input[type=checkbox]:checked:after {
+    content: "\2713";
+    color: var(--banner-flicker)
+}
+
+input[type=checkbox] {
+    padding-left: 2px;
+    display: table-cell;
+    vertical-align: middle;
+    width: 20px !important;
+    height: 20px !important;
+    appearance: none;
+    text-shadow: none;
+    border: 0;
+    box-shadow: none;
+    font-size: 1.3em;
+    margin-left: -25px !important;
+    line-height: 1.1em;
+    margin-top: 0;
+    background-color: var(--items-bg);
+    border: 1px solid var(--border-master) !important
+}
+
+div#playlistrow div.checkbox {
+    padding-left: 5px
+}
+
+.videolist li.queue_active {
+    border-left: 1px solid var(--playlist-current) !important
+}
+
+.bigtitle {
+    border-bottom-width: 1px !important;
+    border-bottom-left-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+    padding: 5px;
+    font-size: 120%;
+    text-align: center
+}
+
+.btn-chatctrl {
+    margin-right: 0 !important
+}
+
+.btn-colors {
+    margin-left: 0 !important
+}
+
+.btngr-padding {
+    padding-left: 20px
+}
+
+.cbtn {
+    background-image: none !important;
+    margin-right: 0 !important
+}
+
+.centered {
+    text-align: center !important
+}
+
+.channel-emote {
+    cursor: pointer
+}
+
+.clearfix0 {
+    clear: both;
+    margin-bottom: 0
+}
+
+.clearfix5 {
+    clear: both;
+    margin-bottom: 5px
+}
+
+.commands-tbl td {
+    max-width: 400px;
+    padding-right: 20px
+}
+
+.commands-tbl tr:not(:first-child) td {
+    padding-top: 10px
+}
+
+.darkened {
+    opacity: .4 !important
+}
+
+.dropdown-menu .glyphicon-ok,
+nav .dropdown-menu .glyphicon {
+    margin-right: 8px
+}
+
+.dropdown-menu li {
+    cursor: pointer
+}
+
+.embedimg,
+.oekakiimg {
+    border-radius: 10px;
+    margin-bottom: 6px !important
+}
+
+.embedimg,
+.embedvid,
+.oekakiimg {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: 6px !important
+}
+
+.oekakiimg {
+    border: solid 2px #000
+}
+
+.embedvid {
+    border-radius: 6px
+}
+
+.glyphicon.small {
+    margin-left: 8px;
+    cursor: pointer
+}
+
+.group-modal {
+    margin-bottom: 20px
+}
+
+.icon-right {
+    margin-left: 8px
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px
+}
+
+.margin-top-15 {
+    margin-top: 15px
+}
+
+.maxwidth {
+    width: 100% !important
+}
+
+.miniature {
+    max-width: 120px;
+    max-height: 90px
+}
+
+.modal .channel-emote {
+    max-width: 50px !important;
+    max-height: 50px !important
+}
+
+.modal .embedimg,
+.modal .embedvid {
+    max-width: 100px !important;
+    max-height: 100px !important
+}
+
+.modal .elements-inline,
+.modal .panel-body>div:nth-child(1) .checkbox-inline {
+    padding-top: 0
+}
+
+.modal-btn-xs {
+    margin-right: 4px
+}
+
+.nav-cog {
+    margin-right: 8px
+}
+
+.player-chat {
+    color: #fff;
+    font-size: 2em;
+    position: absolute;
+    z-index: 504;
+    cursor: default;
+    white-space: nowrap;
+    opacity: .75;
+    letter-spacing: 4px;
+    user-select: none;
+    pointer-events: none;
+    padding: 0 8px;
+    text-shadow: 0 -1px #000, 1px 0 #000, 0 1px #000, -1px 0 #000;
+    background-color: rgba(0, 0, 0, .5);
+    border-radius: 6px
+}
+
+.player-chat.greentext {
+    color: #789922
+}
+
+.player-chat.marq {
+    transition: right 8s linear, left 8s linear
+}
+
+.player-chat.marq2 {
+    transition: right 14s linear, left 14s linear
+}
+
+.player-chat.shout {
+    color: red
+}
+
+.navbar-fixed-top.snav {
+    position: inherit !important;
+    margin-bottom: 8px !important
+}
+
+.radiotitle {
+    border-style: solid !important;
+    border-width: 6px !important;
+    border-radius: 5px !important;
+    padding: 10px !important;
+    font-size: 150% !important
+}
+
+.scrolled {
+    max-height: calc(100vh - 250px);
+    overflow-y: auto
+}
+
+.server-msg-reconnect:after {
+    content: " to: /' + CHANNELPATH + '/' + window.location.href.split("/").pop() + '"
+}
+
+.single-checkbox {
+    padding-left: 15px;
+    padding-top: 9px
+}
+
+.smallfont {
+    font-size: 85%
+}
+
+.stitched {
+    outline: 1px dashed #98abb9;
+    outline-offset: -5px;
+    background-color: #556068;
+    box-shadow: 2px 2px 2px #000;
+    padding: 5px;
+    border-radius: 2px;
+    color: #eee
+}
+
+.widecm {
+    min-width: 260px
+}
+
+select {
+    cursor: pointer
+}
+
+#navbar-unpin,
+#navbar-up {
+    margin-left: 10px;
+    margin-right: 5px
+}
+
+@media (max-width:768px) {
+    #navbar-unpin,
+    #navbar-up {
+        margin-left: 0;
+        margin-right: 15px
+    }
+}
+
+#navbar-collapsed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 0;
+    z-index: 504
+}
+
+#navbar-collapsed div {
+    width: 60px;
+    margin: 0 auto;
+    border: solid 3px #ccc;
+    padding: 4px;
+    background-color: #333;
+    border-style: none solid solid;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px
+}
+
+body.bright #navbar-collapsed div {
+    border-color: #666;
+    background-color: #ddd
+}
+
+#useravatar {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 8px;
+    margin-bottom: 5px
+}
+
+#rooms-table {
+    max-height: 280px;
+    overflow: auto;
+    margin-bottom: 5px
+}
+
+#usernamemark {
+    max-width: 50px;
+    font-weight: 700
+}
+
+#chatmaxsize,
+#emotesperpage {
+    max-width: 120px
+}
+
+#css-area,
+#customhtml {
+    font-family: Monospace
+}
+
+#customhtml {
+    margin-top: 8px
+}
+
+#notesavewrap {
+    padding-top: 5px
+}
+
+#titlerow {
+    margin-bottom: 10px
+}
+
+#userlist.separate .userlist_item {
+    border-bottom: solid 2px #aaa;
+    padding: 2px
+}
+
+#mediastats {
+    margin: 0 0 1px;
+    padding-left: 1px;
+    padding-right: 1px
+}
+
+#player-chat-wrap img {
+    max-width: 60px;
+    max-height: 60px
+}
+
+#player-chat-wrap img.oekakiimg {
+    max-width: 100px;
+    max-height: 100px
+}
+
+#mutegroup {
+    margin-top: 10px;
+    margin-bottom: 10px
+}
+
+#chatpanel {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: calc(100% - 30px);
+    max-height: 65%;
+    border-width: 6px;
+    padding: 10px
+}
+
+body.glued #chatpanel,
+body.theatre-mode #chatpanel {
+    left: 0;
+    width: 100%
+}
+
+#cpheader {
+    margin-bottom: 10px
+}
+
+#chatpanelcontrol {
+    margin-left: 10px
+}
+
+#emotespages {
+    margin-top: 10px
+}
+
+#emotes-container img {
+    margin: 5px;
+    max-height: 35px;
+    cursor: pointer
+}
+
+#unicodeform table {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace
+}
+
+#unicodeform td {
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    white-space: nowrap
+}
+
+#chatslider {
+    margin-top: 15px;
+    margin-bottom: 15px
+}
+
+#upalert {
+    padding: 10px;
+    position: absolute;
+    width: 150px;
+    max-width: 150px;
+    border-width: 4px
+}
+
+#timeleftclock {
+    float: right;
+    margin: auto 5px
+}
+
+#plr-menu {
+    min-width: 215px
+}
+
+#plr-menu .glyphicon-refresh {
+    margin-right: 5px
+}
+
+#contributors-list td:nth-child(1),
+#contributors-list th:nth-child(1) {
+    padding-right: 15px
+}
+
+#contributors-list td:nth-child(3),
+#contributors-list th:nth-child(3) {
+    text-align: right;
+    padding-left: 50px
+}
+
+#db-well {
+    margin-top: 10px
+}
+
+#db-well>button {
+    display: block;
+    width: 40%;
+    margin: 0 auto
+}
+
+#addoptswrap {
+    margin-bottom: 5px
+}
+
+#utc {
+    padding-top: 5px
+}
+
+#channel-list {
+    max-height: 400px;
+    margin-top: 5px;
+    overflow: auto
+}
+
+#addtofav-btn,
+#favscontrol {
+    margin-bottom: 5px
+}
+
+#queue-fav {
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 10px
+}
+
+#db-well button.pull-left,
+#queue-fav button.pull-left {
+    margin-right: 4px
+}
+
+#previewFrame {
+    margin: 0 auto;
+    display: block
+}
+
+#freeslots-meta {
+    font-size: 100%;
+    text-align: right;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px
+}
+
+#freeslots {
+    float: left
+}
+
+#fixfavs-btn {
+    margin-left: 10px
+}
+
+#chatopts-menu .btn {
+    margin-right: 0
+}
+
+#chatopts-menu .glyphicon-refresh,
+#plr-menu .glyphicon-volume-up {
+    margin-right: 5px
+}
+
+#plfiltercontrol button {
+    border-radius: 0
+}
+
+#tqueue {
+    position: absolute;
+    top: 0;
+    background-color: #000;
+    z-index: 1002
+}
+
+#tqueue.tmode {
+    left: 0
+}
+
+#tqueue.tmode2 {
+    right: 0
+}
+
+#queue img {
+    margin-top: 5px;
+    margin-right: 5px
+}
+
+#plmeta .label {
+    margin-left: 2px
+}
+
+#scroll-to-chat {
+    margin-right: 15px
+}
+
+body.jukebox-mode #expand-playlist,
+body.jukebox-mode #scroll-to-chat {
+    display: none
+}
+
+body.jukebox-mode #hide-playlist {
+    margin-right: 15px
+}
+
+#avatarspanel,
+#customhtmlwrap,
+#notepad-well,
+#oekaki-well {
+    margin-top: 10px;
+    margin-bottom: 10px
+}
+
+#spoekaki {
+    margin: 0 auto;
+    max-width: 400px
+}
+
+#spoekaki canvas {
+    height: 235px
+}
+
+#spoekaki .drawing-board-control-navigation button {
+    color: #000
+}
+
+#oeup-btn {
+    font-size: 10pt;
+    color: #000
+}
+
+#avatarspanel {
+    padding-bottom: 9px;
+    text-align: center
+}
+
+#avatarspanel div {
+    margin-bottom: 9px
+}
+
+#avatarspanel img {
+    margin: 0 5px 10px;
+    border-radius: 10px;
+    max-width: 50px;
+    max-height: 50px
+}
+
+#playlistmanagerwrap {
+    margin-top: 0
+}
+
+#uploadwell {
+    display: none !important
+}
+
+#spc {
+    width: 10px;
+    height: 10px;
+    display: none
+}
+
+#close-btn,
+#css-btn,
+#switch-btn {
+    position: fixed;
+    top: 0;
+    z-index: 1001;
+    border: solid 4px #fff;
+    border-radius: 8px;
+    opacity: .6
+}
+
+#close-btn:hover,
+#css-btn:hover,
+#switch-btn:hover {
+    opacity: 1
+}
+
+#close-btn.tmode {
+    right: 0
+}
+
+#close-btn.tmode2 {
+    left: 0
+}
+
+body.bright #close-btn,
+body.bright #css-btn,
+body.bright #switch-btn {
+    border: solid 4px #333
+}
+
+#switch-btn.tmode {
+    right: 50px
+}
+
+#switch-btn.tmode2 {
+    left: 50px
+}
+
+#css-btn {
+    right: 100px
+}
+
+body.modern.radio-mode #videowrap-header {
+    height: auto
+}
+
+#radioheader {
+    font-family: monospace;
+    font-size: 150%;
+    margin-bottom: 15px
+}
+
+#radioslider {
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+#chatslider a,
+#radioslider a {
+    background: 0 0;
+    background-color: red;
+    cursor: pointer
+}
+
+.autoscroll {
+    overflow-y: auto !important
+}
+
+.expanded {
+    max-height: 100000px !important
+}
+
+.hidden {
+    display: none !important
+}
+
+.modal-open.nobackdrop,
+.modal.nobackdrop {
+    padding-right: 0 !important
+}
+
+.modal-open.nobackdrop {
+    overflow-x: hidden !important;
+    overflow-y: auto !important
+}
+
+.modal-backdrop.nobackdrop {
+    background: 0 0 !important
+}
+
+.mX {
+    -webkit-transform: scaleX(-1) !important;
+    -moz-transform: scaleX(-1) !important;
+    transform: scaleX(-1) !important;
+    -ms-transform: scaleX(-1) !important;
+    -o-transform: scaleX(-1) !important
+}
+
+.mY {
+    -webkit-transform: scaleY(-1) !important;
+    -moz-transform: scaleY(-1) !important;
+    transform: scaleY(-1) !important;
+    -ms-transform: scaleY(-1) !important;
+    -o-transform: scaleY(-1) !important
+}
+
+.noscroll {
+    overflow: hidden !important
+}
+
+.numbered {
+    list-style: decimal !important;
+    padding-left: 45px !important;
+    border-style: solid solid none !important;
+    border-width: 1px !important
+}
+
+body.bright .numbered {
+    border-color: #aaa !important
+}
+
+.opt:not(.activated) .glyphicon-ok {
+    display: none !important
+}
+
+.related {
+    position: related !important
+}
+
+body.glued #announcements>div,
+body.glued #drinkbar,
+body.glued #motdrow>div,
+body.glued #titlewrap {
+    padding-left: 0 !important;
+    padding-right: 0 !important
+}
+
+body.glued #chatwrap,
+body.glued #leftcontrols,
+body.glued #rightcontrols,
+body.glued #videowrap {
+    padding-left: 0 !important;
+    padding-right: 0 !important
+}
+
+body.glued #leftpane-inner>div,
+body.glued #rightpane-inner>div {
+    padding-left: 0 !important;
+    padding-right: 0 !important
+}
+
+body.singlecolumn #titlerow {
+    display: none !important
+}
+
+nav.transparent {
+    opacity: .3 !important
+}
+
+nav.transparent:hover {
+    opacity: 1 !important
+}
+
+#mainpage.plmode {
+    padding-top: 15px !important
+}
+
+#mainpage.snav {
+    padding-top: 0 !important
+}
+
+#userlist.bigp .profile-box {
+    max-width: 320px !important;
+    max-height: 450px !important;
+    border-radius: 10px !important;
+    border-width: 4px !important;
+    padding: 10px !important;
+    text-align: center !important
+}
+
+#userlist.bigp .profile-image {
+    max-width: 160px !important;
+    max-height: 160px !important;
+    display: block !important;
+    box-shadow: 0 0 8px #fff !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 6px !important
+}
+
+#userlist.bigp .profile-box strong {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    font-size: 160% !important;
+    padding-bottom: 2px !important;
+    border-bottom: dotted 1px #fff !important
+}
+
+#userlist.bigp .profile-box p {
+    text-align: left !important
+}
+
+#userlist.matrix {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important
+}
+
+#chatline.whitebg,
+#messagebuffer.whitebg,
+#userlist.whitebg,
+.pm-buffer.whitebg,
+.pm-input.whitebg {
+    background-color: #fff !important;
+    background-image: none !important;
+    color: #000 !important
+}
+
+#userlist.idleafk .userlist_afk {
+    display: none !important
+}
+
+#chatwrap.noindicator #newmessages-indicator {
+    display: none !important
+}
+
+#chatline.matrix,
+#messagebuffer.matrix,
+#messagebuffer.matrix .action {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
+    color: #32cd32 !important
+}
+
+#messagebuffer.matrix .server-whisper {
+    color: #32cd32 !important
+}
+
+#messagebuffer.whitebg a,
+.pm-buffer.whitebg a {
+    color: #337ab7 !important
+}
+
+#messagebuffer.whitebg .nick-highlight,
+#messagebuffer.whitebg .nick-hover {
+    background-color: #e9e9e9 !important;
+    background-image: none !important;
+    color: #000 !important
+}
+
+#chatline.whitebg.matrix,
+#messagebuffer.matrix.whitebg,
+#messagebuffer.matrix.whitebg .action {
+    color: #32cd32 !important;
+    background-image: none !important
+}
+
+#messagebuffer.matrix.whitebg .nick-highlight,
+#messagebuffer.matrix.whitebg .nick-hover {
+    color: #32cd32 !important;
+    background-image: none !important
+}
+
+#messagebuffer.lines div[class*=chat-msg]:not(.drink) {
+    border-bottom: dotted 2px #666 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important
+}
+
+#messagebuffer.bubbles div[class*=chat-msg]:not(.drink) {
+    margin: 5px !important;
+    padding: 5px !important;
+    border: solid 2px #aaa !important;
+    border-radius: 15px !important
+}
+
+#messagebuffer.bubbles .timestamp {
+    display: block !important;
+    float: right !important
+}
+
+#messagebuffer.noavatars strong.username {
+    color: inherit !important
+}
+
+#messagebuffer.noavatars span[class^=userlist] {
+    color: inherit !important
+}
+
+#messagebuffer.noavatars strong.username:before {
+    all: inherit !important
+}
+
+#messagebuffer.ignoreserver .serverinfo {
+    display: none !important
+}
+
+#messagebuffer.nocolors .chatcolor {
+    all: inherit !important
+}
+
+#messagebuffer.noeffects .txteffect,
+#messagebuffer.noeffects strong:not(.username) {
+    all: inherit !important
+}
+
+#messagebuffer.noeffects em,
+#messagebuffer.noeffects s {
+    all: inherit !important
+}
+
+#messagebuffer.noemotes img:not(.embedimg):not(.oekakiimg) {
+    display: none !important
+}
+
+#messagebuffer.notstamps .timestamp {
+    display: none !important
+}
+
+#emote-view {
+    position: absolute !important;
+    margin-top: 1px !important;
+    background-color: var(--btn-text-hover) !important;
+    min-width: 20px !important;
+    background-color: #000 !important;
+    border: 0 !important;
+    border-radius: 4px !important;
+    z-index: 1000 !important
+}
+
+body.bright #emote-view {
+    background-color: #fff !important;
+    border: solid 2px #000 !important
+}
+
+#emote-view.no-preview {
+    display: none !important
+}
+
+body.theatre-mode #emote-view.b-left {
+    display: none !important
+}
+
+#emote-view.b-right {
+    right: 15px !important
+}
+
+#emote-view.t-left {
+    bottom: ' + (chatlineHT + 3) + 'px !important
+}
+
+#emote-view.t-right {
+    bottom: ' + (chatlineHT + 3) + 'px !important;
+    right: 15px !important
+}
+
+body.glued #emote-view.b-right {
+    right: 0 !important
+}
+
+body.glued #emote-view.t-right,
+body.theatre-mode #emote-view.t-right {
+    right: 0 !important
+}
+
+#emote-view img {
+    max-width: 100px;
+    max-height: 100px
+}
+
+#hidden-plr {
+    height: 100% !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    background-color: #fff !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    z-index: 501 !important
+}
+
+#plr-bright {
+    height: 100% !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: 502 !important
+}
+
+#mascot {
+    position: absolute !important;
+    height: 40% !important;
+    cursor: pointer !important;
+    z-index: 503 !important
+}
+
+#mascot.b-left {
+    left: 10px !important;
+    bottom: 25px !important
+}
+
+#mascot.b-center {
+    bottom: 25px !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: auto !important
+}
+
+#mascot.b-right {
+    right: 10px !important;
+    bottom: 25px !important
+}
+
+#mascot.t-left {
+    left: 10px !important;
+    top: 25px !important
+}
+
+#mascot.t-right {
+    right: 10px !important;
+    top: 25px !important
+}
+
+#mascot.c-center {
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    margin: auto !important
+}
+
+#queue.nobuttons .btn-group {
+    display: none !important
+}
+
+#chatwrap.tmode,
+#chatwrap.tmode2 {
+    position: fixed !important;
+    width: 370px !important;
+    height: 100% !important;
+    top: 0 !important;
+    padding: 0 !important;
+    z-index: 1000 !important
+}
+
+#chatwrap.tmode,
+#videowrap.tmode2 {
+    left: 0 !important
+}
+
+#chatwrap.tmode2,
+#videowrap.tmode {
+    right: 0 !important
+}
+
+#messagebuffer.tmode {
+    height: calc(100% - ' + ($chatheader.outerHeight() + chatlineHT + chatbtnHT) + 'px) !important
+}
+
+#videowrap.tmode,
+#videowrap.tmode2 {
+    position: fixed !important;
+    width: calc(100% - 370px) !important;
+    height: 100% !important;
+    top: 0 !important;
+    padding: 0 !important;
+    z-index: 1000 !important
+}
+
+#videowrap.tmode .embed-responsive,
+#videowrap.tmode2 .embed-responsive {
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important
+}
+
+@media (max-width:750px) {
+    #chatwrap.tmode,
+    #chatwrap.tmode2 {
+        width: 270px !important
+    }
+    #videowrap.tmode,
+    #videowrap.tmode2 {
+        width: calc(100% - 270px) !important
+    }
+}
+
+#pollwrap.tmode div.active:not(.dismissed),
+#pollwrap.tmode2 div.active:not(.dismissed) {
+    position: fixed !important;
+    top: 10px !important;
+    z-index: 10000 !important;
+    min-width: 300px !important
+}
+
+#pollwrap.tmode div.active:not(.dismissed) {
+    left: 400px !important
+}
+
+#pollwrap.tmode2 div.active:not(.dismissed) {
+    left: 50px !important
+}
+
+#pollwrap.tmode div.dismissed,
+#pollwrap.tmode div.muted {
+    display: none !important
+}
+
+#pollwrap.tmode2 div.dismissed,
+#pollwrap.tmode2 div.muted {
+    display: none !important
+}
+
+div.modal-content .panel-body table {
+    background-color: transparent !important
+}
+
+div.modal-content button.close:focus,
+div.modal-content button.close:hover {
+    text-shadow: none;
+    opacity: 1;
+    color: var(--banner-flicker) !important
+}
+
+strong.username {
+    color: #777
+}
+
+.botmeta {
+    font-size: 12px;
+    color: #888
+}
+
+.botmeta s {
+    text-decoration: none !important;
+    font-style: italic;
+    font-size: 10px
+}
+
+div#messagebuffer.linewrap.notstamps span {
+    background-color: transparent !important
+}
+
+div#chatwrap button.btn.btn-primary {
+    display: none
+}
+
+#videowrap {
+    margin-top: -2px
+}
+
+div.chat-msg-GothicKing span.greentext a {
+    color: #789922 !important;
+    font-weight: bold;
+}
+
+div.chat-msg-Unclamable .username {
+    color: pink !important;
+}
+
+.chat-msg-GothicKing .username {
+    font-size: 0;
+}
+
+.chat-msg-GothicKing .username::before {
+    color: var(--bot-username);
+    content: "BOT ";
+    font-size: 13px;
+}
+
+.chat-msg-GothicKing .username {
+    color: var(--bot-username);
+    font-style: normal;
+}
+
+.chat-msg-Rosh .The Great::before {
+    content: "👻 ";
+}
+
+li[title="Added by: Rosh"] {
+    padding-left: 55px;
+    background-image: url(https://i.ibb.co/tCFtVNs/Application-Frame-Host-TQbe-W1-XHHF-removebg-preview-2.png) !important;
+    background-repeat: no-repeat !important;
+    background-size: 38px !important;
+    background-position: 0 -10px !important;
+}
+
+li[title="Added by: GothicKing"] .qe_title {
+    color: var(--bot-video-title);
+}
+
+ul.nav:nth-child(1)>li:nth-child(1) {
+    display: none;
+}
+
+
+element.style {
+}
+
+.nick-hover {
+    background-color: #f5d80c70;
+}
+
+.panel-primary>.panel-heading {
+    background-color: #ffd90fbf !important;
+}
+
+
+.nick-highlight {
+    background-color: #e5e410;
+}
+
+.nick-highlight {
+    background-color: #e5e4102b;
+}
+
+
+.greentext {
+    color: #ffd90f;
+}
+
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffd90f;
+    text-shadow: 0 1px 0 #ffd90f;
+    opacity: .2;
+    filter: alpha(opacity=20);
+}
+
+#chatline, #custom-ping-file, #library_query, #mediaurl, #note-area, #plfilter, #userpl_name, .form-control, input.form-control.pm-input {
+    background-color: var(--items-bg) !important;
+    color: #ffd90f !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: 555;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #ffd90f;
+  border-radius: 10px;
+  borderpx solid #C60C0C;
+}
+
+element.style {
+}
+.videolist li.queue_active {
+    border-left: 18px solid var(--playlist-current) !important;
+}
